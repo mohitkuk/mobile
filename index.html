@@ -1,3 +1,5 @@
+//student name: Mohit Kukreja
+//student Id: 200567833
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,18 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REST API Interaction</title>
     <style>
+        /* CSS styles for improved visual appearance */
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f8f8;
             margin: 0;
             padding: 0;
         }
-
         h1 {
             text-align: center;
             color: #333;
         }
-
         button {
             background-color: #4CAF50;
             color: white;
@@ -27,18 +28,15 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #45a049;
         }
-
         input[type="text"] {
             padding: 8px;
             margin: 5px;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-
         .data-container {
             margin-top: 20px;
             border: 1px solid #ccc;
@@ -46,19 +44,15 @@
             border-radius: 5px;
             background-color: #fff;
         }
-
         .data-item {
             margin-bottom: 10px;
         }
-
         .data-label {
             font-weight: bold;
         }
-
         .data-label::after {
             content: ":";
         }
-
         .data-value {
             margin-left: 10px;
         }
@@ -67,39 +61,47 @@
 <body>
     <h1>REST API Interaction</h1>
 
+    <!-- Buttons to interact with REST APIs -->
     <button onclick="getAllPosts()">Get All Posts</button>
     <button onclick="getAllUsers()">Get All Users</button>
     <button onclick="getPostsGroupedByLocation()">Get Posts Grouped by Location</button>
 
+    <!-- Container to display fetched data -->
     <div id="output"></div>
 
+    <!-- Input field and button to fetch post details -->
     <h2>Get Post Details</h2>
     <input type="text" id="postId" placeholder="Enter Post ID">
     <button onclick="getPostDetails()">Get Post Details</button>
 
+    <!-- Input field and button to fetch user profile -->
     <h2>Get User Profile</h2>
     <input type="text" id="userName" placeholder="Enter User's Name">
     <button onclick="getUserProfile()">Get User Profile</button>
 
     <script>
+        // Function to fetch all posts from the server
         async function getAllPosts() {
             const response = await fetch('http://localhost:3000/posts');
             const data = await response.json();
-            displayData(data);
+            displayData(data); // Display fetched data
         }
 
+        // Function to fetch all users from the server
         async function getAllUsers() {
             const response = await fetch('http://localhost:3000/users');
             const data = await response.json();
-            displayData(data);
+            displayData(data); // Display fetched data
         }
 
+        // Function to fetch posts grouped by location from the server
         async function getPostsGroupedByLocation() {
             const response = await fetch('http://localhost:3000/posts/groupedByLocation');
             const data = await response.json();
-            displayData(data);
+            displayData(data); // Display fetched data
         }
 
+        // Function to fetch details about a specific post based on post ID
         async function getPostDetails() {
             const postId = document.getElementById('postId').value;
             try {
@@ -108,12 +110,13 @@
                     throw new Error(`Failed to fetch post details: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                displayPostDetails(data);
+                displayPostDetails(data); // Display fetched post details
             } catch (error) {
                 console.error('Error fetching post details:', error.message);
             }
         }
 
+        // Function to fetch profile of a specific user based on user's name
         async function getUserProfile() {
             const userName = document.getElementById('userName').value;
             try {
@@ -122,33 +125,62 @@
                     throw new Error(`Failed to fetch user profile: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                displayUserProfile(data);
+                displayUserProfile(data); // Display fetched user profile
             } catch (error) {
                 console.error('Error fetching user profile:', error.message);
             }
         }
 
+        // Function to display fetched data in the output container
         function displayData(data) {
-    
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '';
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '';
 
-    // Check if data is an array
-    if (Array.isArray(data)) {
-        // If it's an array, iterate over each item and display it
-        data.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('data-container');
+            // Check if data is an array
+            if (Array.isArray(data)) {
+                // If it's an array, iterate over each item and display it
+                data.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('data-container');
 
-            if (typeof item === 'object' && !Array.isArray(item)) {
-                // If the item is an object (not an array), display its properties
-                Object.keys(item).forEach(key => {
+                    if (typeof item === 'object' && !Array.isArray(item)) {
+                        // If the item is an object (not an array), display its properties
+                        Object.keys(item).forEach(key => {
+                            const label = document.createElement('div');
+                            label.classList.add('data-label');
+                            label.textContent = key;
+
+                            const value = document.createElement('div');
+                            value.textContent = item[key];
+
+                            const dataItem = document.createElement('div');
+                            dataItem.classList.add('data-item');
+                            dataItem.appendChild(label);
+                            dataItem.appendChild(value);
+
+                            itemDiv.appendChild(dataItem);
+                        });
+                    } else {
+                        // If the item is not an object (e.g., a string or number), display it directly
+                        const dataItem = document.createElement('div');
+                        dataItem.textContent = item;
+                        itemDiv.appendChild(dataItem);
+                    }
+
+                    outputDiv.appendChild(itemDiv);
+                });
+            } else {
+                // If it's not an array (i.e., it's an object), display the single item
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('data-container');
+
+                Object.keys(data).forEach(key => {
                     const label = document.createElement('div');
                     label.classList.add('data-label');
                     label.textContent = key;
 
                     const value = document.createElement('div');
-                    value.textContent = item[key];
+                    value.textContent = data[key];
 
                     const dataItem = document.createElement('div');
                     dataItem.classList.add('data-item');
@@ -157,41 +189,12 @@
 
                     itemDiv.appendChild(dataItem);
                 });
-            } else {
-                // If the item is not an object (e.g., a string or number), display it directly
-                const dataItem = document.createElement('div');
-                dataItem.textContent = item;
-                itemDiv.appendChild(dataItem);
+
+                outputDiv.appendChild(itemDiv);
             }
-
-            outputDiv.appendChild(itemDiv);
-        });
-    } else {
-        // If it's not an array (i.e., it's an object), display the single item
-        const itemDiv = document.createElement('div');
-        itemDiv.classList.add('data-container');
-
-        Object.keys(data).forEach(key => {
-            const label = document.createElement('div');
-            label.classList.add('data-label');
-            label.textContent = key;
-
-            const value = document.createElement('div');
-            value.textContent = data[key];
-
-            const dataItem = document.createElement('div');
-            dataItem.classList.add('data-item');
-            dataItem.appendChild(label);
-            dataItem.appendChild(value);
-
-            itemDiv.appendChild(dataItem);
-        });
-
-        outputDiv.appendChild(itemDiv);
-    }
-
         }
 
+        // Function to display fetched post details in the output container
         function displayPostDetails(data) {
             const outputDiv = document.getElementById('output');
             outputDiv.innerHTML = '';
@@ -218,6 +221,7 @@
             outputDiv.appendChild(itemDiv);
         }
 
+        // Function to display fetched user profile in the output container
         function displayUserProfile(data) {
             const outputDiv = document.getElementById('output');
             outputDiv.innerHTML = '';
